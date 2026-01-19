@@ -5,10 +5,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Winnie's Spotify App</title>
+    <script src="/app.js" defer></script>
+
 </head>
 
 <body>
-    
+    <header>
+        <img src="/img/logo.png" class="logo" id="logo">
+    </header>
+
+    <div class="header" id="header">
+        <div class="rowA">
+            <a href="/pages/tracks/shorttracks.html">Top Tracks</a>
+            <a href="/pages/artists/shortartists.html">Top Artists</a>
+        </div>
+
+        <div class="rowB">
+            <a href="/pages/recent.html" id="c">Recently Played</a>
+            <a href="/pages/playlist.html" id="d">Playlist Generator</a>
+        </div>
+    </div>
+
+    <div id="landing-page-content">
+        <h1>Welcome to Winnie's Spotify App!</h1>
+        <p>Discover new music with personalized playlists, and view your top tracks songs, genres and listening history.
+        </p>
+        <p id="loginp">Log in with your Spotify account to get started:</p>
+
+        <button id="loginButton" onclick="requestAuthorization()">
+            <img src="/img/icon.svg" alt="spotify icon" class="spotifyIcon"> Log in to Spotify
+        </button>
+    </div>
+
+    <div id="playlistContainer"></div>
 </body>
 
 </html>
