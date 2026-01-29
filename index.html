@@ -5,13 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Winnie's Spotify App</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/musicbar.css">
+    <script src="config.js"></script>
     <script src="/app.js" defer></script>
 
 </head>
 
-<body>
+<body onload="onPageLoad()">
     <header>
-        <img src="/img/logo.png" class="logo" id="logo">
+        <img src="/img/logo.png" class="logo" id="logo" onclick="redirectToHomePage()">
     </header>
 
     <div class="header" id="header">
@@ -38,6 +41,17 @@
     </div>
 
     <div id="playlistContainer"></div>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let accessToken = localStorage.getItem("access_token");
+            let header = document.getElementById("header");
+            if (!accessToken) {
+                header.style.display = "none";
+            }
+        });
+    </script>
 </body>
 
 </html>
