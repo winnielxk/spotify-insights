@@ -1,36 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recently Played</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recently Played</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="/config.js"></script>
+<script src="/app.js"></script>
+<style>
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(20px); }
+to { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeIn 0.5s ease-out forwards; }
+.track-item { animation: fadeIn 0.4s ease-out forwards; opacity: 0; }
+</style>
 </head>
+<body class="bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 min-h-screen text-white font-sans">
 
-<body>
-    <header>
-        <img src="/img/logo.png" class="logo" id="logo">
-    </header>
+<!-- Header -->
+<header class="py-6 px-8 flex items-center justify-between">
+<img src="/img/logo.png" class="h-12 cursor-pointer hover:scale-105 transition-transform" id="logo" onclick="redirectToHomePage()">
+</header>
 
-    <div class="header">
-        <div class="rowA">
-            <a href="/pages/tracks/shorttracks.html">Top Tracks</a>
-            <a href="/pages/artists/shortartists.html">Top Artists</a>
-        </div>
+<!-- Navigation -->
+<nav class="max-w-4xl mx-auto px-4 py-4">
+<div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+<a href="/pages/tracks/shorttracks.html"
+class="bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-xl p-4 text-center font-semibold transition-all hover:scale-105 hover:shadow-lg">
+Top Tracks
+</a>
+<a href="/pages/artists/shortartists.html"
+class="bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-xl p-4 text-center font-semibold transition-all hover:scale-105 hover:shadow-lg">
+Top Artists
+</a>
+<a href="/pages/recent.html"
+class="bg-white/20 backdrop-blur-sm rounded-xl p-4 text-center font-semibold transition-all hover:scale-105 hover:shadow-lg border border-white/30">
+Recently Played
+</a>
+</div>
+</nav>
 
-        <div class="rowB">
-            <a href="/pages/recent.html">Recently Played</a>
-            <a href="/pages/playlist.html">Playlist Generator</a>
-        </div>
-    </div>
+<!-- Main Content -->
+<div class="max-w-4xl mx-auto px-6 py-8 fade-in">
+<h1 class="text-4xl md:text-5xl font-bold mb-8 bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+Recently Played
+</h1>
 
-    <h1 id="titleHeader">Recently Played</h1>
+<!-- Recently Played List -->
+<ul id="recentList" class="space-y-3"></ul>
+</div>
 
-    <div id="recentContainer">
+<script>
+function getTimeAgo(timestamp) {
+const now = new Date();
+const playedAt = new Date(timestamp);
+const diffMs = now - playedAt;
+const diffMins = Math.floor(diffMs / 60000);
+const diffHours = Math.floor(diffMs / 3600000);
+const diffDays = Math.floor(diffMs / 86400000);
 
-        <ul id="recentList" class="recent-list"></ul>
-    </div>
+if (diffMins < 1) return 'Just now';
+if (diffMins < 60) return `${diffMins}m ago`;
+if (diffHours < 24) return `${diffHours}h ago`;
+return `${diffDays}d ago`;
+}
 
+async function loadRecentTracks() {
+const response = await fetchWebApi('v1/me/player/recently-played?limit=50', 'GET');
+const recentList = document.getElementById("recentList");
+recentList.innerHTML = '';
+
+response.items.forEach((item, index) => {
+const track = item.track;
+const trackItem = document.createElement("li");
+trackItem.classList.add("track-item");
+trackItem.style.animationDelay = `${index * 0.03}s`;
+
+trackItem.innerHTML = `
+<a href="${track.external_urls.spotify}" target="_blank"
+class="flex items-center gap-4 bg-white/5 hover:bg-white/15 backdrop-blur-sm rounded-2xl p-4 transition-all hover:scale-[1.02] hover:shadow-xl group">
+<img src="${track.album.images[0].url}" alt="Album Art" class="w-14 h-14 rounded-xl shadow-lg shrink-0">
+<div class="flex-1 min-w-0">
+<div class="font-semibold text-white truncate group-hover:text-green-400 transition-colors">${track.name}</div>
+<div class="text-purple-300 text-sm truncate">${track.artists.map(a => a.name).join(', ')}</div>
+</div>
+<div class="text-purple-400 text-sm shrink-0 hidden md:block">${track.album.name}</div>
+<div class="text-purple-400 text-sm shrink-0 min-w-[70px] text-right">${getTimeAgo(item.played_at)}</div>
+<svg class="w-5 h-5 text-green-400 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" fill="currentColor" viewBox="0 0 24 24">
+<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+</svg>
+</a>
+`;
+recentList.appendChild(trackItem);
+});
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+loadRecentTracks();
+});
+</script>
 </body>
-
 </html>
