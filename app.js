@@ -225,8 +225,7 @@ function requestAuthorization() {
     url += "&response_type=code";
     url += "&redirect_uri=" + encodeURI(redirect_uri);
     url += "&show_dialog=true";
-    url += "&scope=playlist-modify-public playlist-modify-private user-read-private user-read-email user-library-read user-top-read user-read-recently-played user-read-currently-playing";
-    window.location.href = url; // Show Spotify's authorization screen
+    url += "&scope=playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private user-read-private user-read-email user-library-read user-top-read user-read-recently-played user-read-currently-playing user-read-playback-state";    window.location.href = url; // Show Spotify's authorization screen
 }
 
 function redirectToHomePage() {

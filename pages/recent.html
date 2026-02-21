@@ -12,8 +12,13 @@
 from { opacity: 0; transform: translateY(20px); }
 to { opacity: 1; transform: translateY(0); }
 }
+@keyframes pulse {
+0%, 100% { opacity: 1; }
+50% { opacity: 0.5; }
+}
 .fade-in { animation: fadeIn 0.5s ease-out forwards; }
 .track-item { animation: fadeIn 0.4s ease-out forwards; opacity: 0; }
+.pulse { animation: pulse 2s ease-in-out infinite; }
 </style>
 </head>
 <body class="bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 min-h-screen text-white font-sans">
@@ -47,6 +52,17 @@ Recently Played
 Recently Played
 </h1>
 
+<!-- Now Playing Section -->
+<div id="nowPlayingContainer" class="hidden mb-8">
+<h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+<span class="pulse">🎵</span> Now Playing
+</h2>
+<div id="nowPlaying" class="bg-gradient-to-r from-green-500/20 to-blue-500/20 backdrop-blur-sm rounded-2xl p-6 border border-green-400/30"></div>
+</div>
+
+<!-- Recently Played Header -->
+<h2 class="text-xl font-semibold mb-4">Recent Tracks</h2>
+
 <!-- Recently Played List -->
 <ul id="recentList" class="space-y-3"></ul>
 </div>
@@ -64,6 +80,59 @@ if (diffMins < 1) return 'Just now';
 if (diffMins < 60) return `${diffMins}m ago`;
 if (diffHours < 24) return `${diffHours}h ago`;
 return `${diffDays}d ago`;
+}
+
+function formatDuration(ms) {
+const mins = Math.floor(ms / 60000);
+const secs = Math.floor((ms % 60000) / 1000);
+return `${mins}:${String(secs).padStart(2, '0')}`;
+}
+
+async function loadNowPlaying() {
+try {
+const response = await fetchWebApi('v1/me/player/currently-playing', 'GET');
+const container = document.getElementById('nowPlayingContainer');
+const nowPlaying = document.getElementById('nowPlaying');
+
+if (response && response.item && response.is_playing) {
+const track = response.item;
+const progress = response.progress_ms;
+const duration = track.duration_ms;
+const progressPercent = (progress / duration) * 100;
+
+nowPlaying.innerHTML = `
+<div class="flex items-center gap-4">
+<img src="${track.album.images[0].url}" alt="Album Art" class="w-20 h-20 rounded-xl shadow-lg shrink-0">
+<div class="flex-1 min-w-0">
+<div class="text-2xl font-bold text-white truncate">${track.name}</div>
+<div class="text-lg text-purple-200 truncate">${track.artists.map(a => a.name).join(', ')}</div>
+<div class="text-sm text-purple-300 mt-1">${track.album.name}</div>
+<div class="mt-3">
+<div class="flex justify-between text-xs text-purple-300 mb-1">
+<span>${formatDuration(progress)}</span>
+<span>${formatDuration(duration)}</span>
+</div>
+<div class="w-full bg-white/10 rounded-full h-2">
+<div class="bg-gradient-to-r from-green-400 to-blue-400 h-2 rounded-full transition-all" style="width: ${progressPercent}%"></div>
+</div>
+</div>
+</div>
+<a href="${track.external_urls.spotify}" target="_blank" 
+class="shrink-0 bg-green-500 hover:bg-green-600 rounded-full p-4 transition-all hover:scale-110">
+<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+</svg>
+</a>
+</div>
+`;
+container.classList.remove('hidden');
+} else {
+container.classList.add('hidden');
+}
+} catch (error) {
+console.log('No track currently playing');
+document.getElementById('nowPlayingContainer').classList.add('hidden');
+}
 }
 
 async function loadRecentTracks() {
@@ -85,7 +154,7 @@ class="flex items-center gap-4 bg-white/5 hover:bg-white/15 backdrop-blur-sm rou
 <div class="font-semibold text-white truncate group-hover:text-green-400 transition-colors">${track.name}</div>
 <div class="text-purple-300 text-sm truncate">${track.artists.map(a => a.name).join(', ')}</div>
 </div>
-<div class="text-purple-400 text-sm shrink-0 hidden md:block">${track.album.name}</div>
+<div class="text-purple-400 text-sm shrink-0 hidden md:block truncate max-w-[200px]">${track.album.name}</div>
 <div class="text-purple-400 text-sm shrink-0 min-w-[70px] text-right">${getTimeAgo(item.played_at)}</div>
 <svg class="w-5 h-5 text-green-400 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" fill="currentColor" viewBox="0 0 24 24">
 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
@@ -96,8 +165,9 @@ recentList.appendChild(trackItem);
 });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-loadRecentTracks();
+document.addEventListener("DOMContentLoaded", async () => {
+await loadNowPlaying();
+await loadRecentTracks();
 });
 </script>
 </body>
