@@ -69,108 +69,11 @@ All time
 </button>
 </div>
 
-<!-- Stats Cards -->
-<div id="statsContainer" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 hidden">
-<!-- Top Genre -->
-<div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
-<div class="text-purple-300 text-sm font-semibold uppercase tracking-wider mb-2">Top Genre</div>
-<div id="topGenreEmoji" class="text-4xl mb-1">🎵</div>
-<div id="topGenre" class="text-xl font-bold text-white capitalize"></div>
-<div id="topGenreCount" class="text-purple-300 text-sm mt-1"></div>
-</div>
-
-<!-- Genre Diversity -->
-<div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
-<div class="text-purple-300 text-sm font-semibold uppercase tracking-wider mb-2">Genre Diversity</div>
-<div id="diversityScore" class="text-4xl font-bold text-white mb-1">--</div>
-<div id="diversityLabel" class="text-purple-300 text-sm"></div>
-<div class="mt-3 bg-white/10 rounded-full h-2">
-<div id="diversityBar" class="bg-gradient-to-r from-pink-400 to-purple-400 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
-</div>
-</div>
-
-<!-- Top Genres Breakdown -->
-<div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
-<div class="text-purple-300 text-sm font-semibold uppercase tracking-wider mb-3">Genre Breakdown</div>
-<div id="genreBreakdown" class="space-y-2"></div>
-</div>
-</div>
-
-<!-- Artists Grid -->
-<ul id="topTracksList" class="space-y-3"></ul>
+<!-- Artists List -->
+<ul id="topArtistsList" class="space-y-3"></ul>
 </div>
 
 <script>
-const genreEmojis = {
-"hip hop": "🎤", "rap": "🎤", "pop": "✨", "rock": "🎸",
-"r&b": "🎶", "soul": "🎶", "indie": "🌿", "electronic": "🎛️",
-"dance": "💃", "jazz": "🎷", "classical": "🎻", "country": "🤠",
-"metal": "🤘", "punk": "⚡", "folk": "🪕", "latin": "🌶️",
-"reggae": "🌴", "blues": "🎺", "alternative": "🔮", "trap": "🔊"
-};
-
-function getGenreEmoji(genre) {
-const lower = genre.toLowerCase();
-for (const [key, emoji] of Object.entries(genreEmojis)) {
-if (lower.includes(key)) return emoji;
-}
-return "🎵";
-}
-
-function getDiversityLabel(count) {
-if (count >= 15) return { label: "Extremely Diverse 🌍", pct: 100 };
-if (count >= 10) return { label: "Very Diverse 🎨", pct: 80 };
-if (count >= 6) return { label: "Moderately Diverse 🎧", pct: 55 };
-if (count >= 3) return { label: "Genre Loyal 🎯", pct: 30 };
-return { label: "Ride or Die Fan 🔒", pct: 10 };
-}
-
-function updateStats(artists) {
-// Count genres
-const genreCounts = {};
-artists.forEach(artist => {
-artist.genres.forEach(genre => {
-genreCounts[genre] = (genreCounts[genre] || 0) + 1;
-});
-});
-
-const sortedGenres = Object.entries(genreCounts).sort((a, b) => b[1] - a[1]);
-const uniqueGenreCount = sortedGenres.length;
-
-// Top Genre
-if (sortedGenres.length > 0) {
-const [topGenre, topCount] = sortedGenres[0];
-document.getElementById('topGenreEmoji').textContent = getGenreEmoji(topGenre);
-document.getElementById('topGenre').textContent = topGenre;
-document.getElementById('topGenreCount').textContent = `Appears in ${topCount} of your top artists`;
-}
-
-// Diversity Score
-const { label, pct } = getDiversityLabel(uniqueGenreCount);
-document.getElementById('diversityScore').textContent = `${uniqueGenreCount} genres`;
-document.getElementById('diversityLabel').textContent = label;
-setTimeout(() => {
-document.getElementById('diversityBar').style.width = `${pct}%`;
-}, 100);
-
-// Genre Breakdown (top 4)
-const topGenres = sortedGenres.slice(0, 4);
-const maxCount = topGenres[0]?.[1] || 1;
-document.getElementById('genreBreakdown').innerHTML = topGenres.map(([genre, count]) => `
-<div>
-<div class="flex justify-between text-sm mb-1">
-<span class="text-white font-semibold capitalize truncate">${genre}</span>
-<span class="text-purple-300 shrink-0 ml-2">${count} artists</span>
-</div>
-<div class="bg-white/10 rounded-full h-1.5">
-<div class="bg-gradient-to-r from-green-400 to-blue-400 h-1.5 rounded-full" style="width: ${Math.round((count / maxCount) * 100)}%"></div>
-</div>
-</div>
-`).join('');
-
-document.getElementById('statsContainer').classList.remove('hidden');
-}
-
 function switchTab(timeRange, clickedBtn) {
 document.querySelectorAll('.tab-btn').forEach(btn => {
 btn.classList.remove('bg-green-500', 'text-white', 'shadow-lg');
@@ -178,17 +81,14 @@ btn.classList.add('text-purple-200');
 });
 clickedBtn.classList.add('bg-green-500', 'text-white', 'shadow-lg');
 clickedBtn.classList.remove('text-purple-200');
-document.getElementById('topTracksList').innerHTML = '';
-document.getElementById('statsContainer').classList.add('hidden');
+document.getElementById('topArtistsList').innerHTML = '';
 loadArtists(timeRange);
 }
 
 async function loadArtists(timeRange) {
 const response = await fetchWebApi(`v1/me/top/artists?limit=50&time_range=${timeRange}`, 'GET');
-const artistsList = document.getElementById("topTracksList");
+const artistsList = document.getElementById("topArtistsList");
 artistsList.innerHTML = '';
-
-updateStats(response.items);
 
 response.items.forEach((artist, index) => {
 const artistItem = document.createElement("li");
@@ -196,7 +96,6 @@ artistItem.classList.add("artist-item");
 artistItem.style.animationDelay = `${index * 0.05}s`;
 
 const imageUrl = artist.images?.[0]?.url || '/img/icon.svg';
-const topGenre = artist.genres?.[0] || 'Unknown';
 
 artistItem.innerHTML = `
 <a href="${artist.external_urls.spotify}" target="_blank"
@@ -205,7 +104,7 @@ class="flex items-center gap-4 bg-white/5 hover:bg-white/15 backdrop-blur-sm rou
 <img src="${imageUrl}" alt="${artist.name}" class="w-14 h-14 rounded-full shadow-lg shrink-0 object-cover">
 <div class="flex-1 min-w-0">
 <div class="font-semibold text-white truncate group-hover:text-green-400 transition-colors">${artist.name}</div>
-<div class="text-purple-300 text-sm truncate capitalize">${topGenre}</div>
+<div class="text-purple-400 text-sm">${artist.followers.total.toLocaleString()} followers</div>
 </div>
 <div class="hidden md:flex items-center gap-2 shrink-0">
 <div class="text-right">
