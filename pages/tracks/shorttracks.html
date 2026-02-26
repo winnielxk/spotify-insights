@@ -1,42 +1,241 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Top Tracks</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <script src="/app.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Top Tracks</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="/config.js"></script>
+<script src="/app.js"></script>
+<style>
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(20px); }
+to { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeIn 0.5s ease-out forwards; }
+.track-item { animation: fadeIn 0.4s ease-out forwards; opacity: 0; }
+</style>
 </head>
-<body onload="displayTopTracks('short_term')">
-    <header>
-        <img src="/img/logo.png" class="logo" id="logo" onclick="redirectToHomePage()">
-    </header>
+<body class="bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 min-h-screen text-white font-sans">
 
-    <div class="header">
-        <div class="rowA">
-            <a href="/pages/tracks/shorttracks.html">Top Tracks</a>
-            <a href="/pages/artists/shortartists.html">Top Artists</a>
-        </div>
+<!-- Header -->
+<header class="py-6 px-8 flex items-center justify-between">
+<img src="/img/logo.png" class="h-12 cursor-pointer hover:scale-105 transition-transform" id="logo" onclick="redirectToHomePage()">
+</header>
 
-        <div class="rowB">
-            <a href="/pages/recent.html">Recently Played</a>
-            <a href="/pages/playlist.html">Playlist Generator</a>
-        </div>
-    </div>
+<!-- Navigation -->
+<nav class="max-w-4xl mx-auto px-4 py-4">
+<div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+<a href="/pages/tracks/shorttracks.html"
+class="bg-white/20 backdrop-blur-sm rounded-xl p-4 text-center font-semibold transition-all hover:scale-105 hover:shadow-lg border border-white/30">
+Top Tracks
+</a>
+<a href="/pages/artists/shortartists.html"
+class="bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-xl p-4 text-center font-semibold transition-all hover:scale-105 hover:shadow-lg">
+Top Artists
+</a>
+<a href="/pages/recent.html"
+class="bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-xl p-4 text-center font-semibold transition-all hover:scale-105 hover:shadow-lg">
+Recently Played
+</a>
+</div>
+</nav>
 
-    <h1 id="titleHeader">Top Tracks</h1>
+<!-- Main Content -->
+<div class="max-w-4xl mx-auto px-6 py-8 fade-in">
+<h1 class="text-4xl md:text-5xl font-bold mb-8 bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+Top Tracks
+</h1>
 
-    <div id="tracksContainer">
+<!-- Time Range Tabs -->
+<div id="tabs" class="flex items-center gap-2 mb-8 bg-white/10 backdrop-blur-sm rounded-2xl p-2 w-fit">
+<button
+onclick="switchTab('short_term', this)"
+id="shortTermBtn"
+class="tab-btn px-6 py-2 rounded-xl font-semibold transition-all bg-green-500 text-white shadow-lg">
+Last 4 weeks
+</button>
+<button
+onclick="switchTab('medium_term', this)"
+id="mediumTermBtn"
+class="tab-btn px-6 py-2 rounded-xl font-semibold transition-all text-purple-200 hover:text-white hover:bg-white/10">
+Last 6 months
+</button>
+<button
+onclick="switchTab('long_term', this)"
+id="longTermBtn"
+class="tab-btn px-6 py-2 rounded-xl font-semibold transition-all text-purple-200 hover:text-white hover:bg-white/10">
+Last year
+</button>
+</div>
 
-        <div id="tabs">
-            <button id="shortTermBtn">Last 4 weeks</button>
-            <div class="divider"></div>
-            <button id="mediumTermBtn">Last 6 months</button>
-            <div class="divider"></div>
-            <button id="longTermBtn">Last year</button>
-        </div>
-        <ul></ul>
-    </div>
+<!-- Stats Cards -->
+<div id="statsContainer" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 hidden">
+<!-- Mainstream Score -->
+<div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+<div class="text-purple-300 text-sm font-semibold uppercase tracking-wider mb-2">Mainstream Score</div>
+<div id="mainstreamScore" class="text-4xl font-bold text-white mb-1">--</div>
+<div id="mainstreamLabel" class="text-purple-300 text-sm"></div>
+<div class="mt-3 bg-white/10 rounded-full h-2">
+<div id="mainstreamBar" class="bg-gradient-to-r from-green-400 to-blue-400 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
+</div>
+</div>
 
+<!-- Music Personality -->
+<div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+<div class="text-purple-300 text-sm font-semibold uppercase tracking-wider mb-2">Music Personality</div>
+<div id="personalityEmoji" class="text-4xl mb-1">🎵</div>
+<div id="personalityTitle" class="text-lg font-bold text-white"></div>
+<div id="personalityDesc" class="text-purple-300 text-sm mt-1"></div>
+</div>
+
+<!-- Decade Breakdown -->
+<div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+<div class="text-purple-300 text-sm font-semibold uppercase tracking-wider mb-3">Era Breakdown</div>
+<div id="decadeBreakdown" class="space-y-2"></div>
+</div>
+</div>
+
+<!-- Tracks List -->
+<ul id="topTracksList" class="space-y-3"></ul>
+</div>
+
+<script>
+function switchTab(timeRange, clickedBtn) {
+document.querySelectorAll('.tab-btn').forEach(btn => {
+btn.classList.remove('bg-green-500', 'text-white', 'shadow-lg');
+btn.classList.add('text-purple-200');
+});
+clickedBtn.classList.add('bg-green-500', 'text-white', 'shadow-lg');
+clickedBtn.classList.remove('text-purple-200');
+document.getElementById('topTracksList').innerHTML = '';
+document.getElementById('statsContainer').classList.add('hidden');
+loadTracks(timeRange);
+}
+
+function getMainstreamLabel(score) {
+if (score >= 80) return { label: "Very Mainstream 📻", color: "from-red-400 to-pink-400" };
+if (score >= 60) return { label: "Pretty Mainstream 🎧", color: "from-orange-400 to-yellow-400" };
+if (score >= 40) return { label: "Middle of the Road 🎵", color: "from-green-400 to-blue-400" };
+if (score >= 20) return { label: "Underground Taste 🎸", color: "from-blue-400 to-purple-400" };
+return { label: "Full Hipster Mode 🕶️", color: "from-purple-400 to-pink-400" };
+}
+
+function getMusicPersonality(tracks) {
+const personalities = {
+"hip hop": { emoji: "🎤", title: "Hip-Hop Head", desc: "You live for the bars and the beat" },
+"rap": { emoji: "🎤", title: "Rap Connoisseur", desc: "From mumble rap to lyrical genius" },
+"pop": { emoji: "✨", title: "Pop Fanatic", desc: "You love what's catchy and fun" },
+"rock": { emoji: "🎸", title: "Rock Lover", desc: "Guitar riffs speak to your soul" },
+"r&b": { emoji: "🎶", title: "R&B Soul", desc: "Smooth vibes only" },
+"indie": { emoji: "🌿", title: "Indie Explorer", desc: "Always finding the next big thing" },
+"electronic": { emoji: "🎛️", title: "Electronic Enthusiast", desc: "You feel the synths in your bones" },
+"jazz": { emoji: "🎷", title: "Jazz Aficionado", desc: "Sophisticated taste in music" },
+"classical": { emoji: "🎻", title: "Classical Soul", desc: "Timeless taste in music" },
+"country": { emoji: "🤠", title: "Country Heart", desc: "Stories and steel guitars" },
+};
+
+// Count artist genres
+const genreCounts = {};
+tracks.forEach(track => {
+// Use track name/artist to guess genre from popularity patterns
+});
+
+// Default personality based on average popularity
+const avgPop = tracks.reduce((sum, t) => sum + t.popularity, 0) / tracks.length;
+if (avgPop > 75) return { emoji: "✨", title: "Chart Chaser", desc: "You love what's hot right now" };
+if (avgPop > 50) return { emoji: "🎧", title: "Mainstream Explorer", desc: "A good mix of popular and unique" };
+return { emoji: "🔭", title: "Hidden Gem Hunter", desc: "You find music others haven't heard yet" };
+}
+
+function getDecadeBreakdown(tracks) {
+const decades = {};
+tracks.forEach(track => {
+const year = new Date(track.album.release_date).getFullYear();
+const decade = Math.floor(year / 10) * 10;
+const label = `${decade}s`;
+decades[label] = (decades[label] || 0) + 1;
+});
+
+return Object.entries(decades)
+.sort((a, b) => b[1] - a[1])
+.slice(0, 4)
+.map(([decade, count]) => ({
+decade,
+percentage: Math.round((count / tracks.length) * 100)
+}));
+}
+
+function updateStats(tracks) {
+// Mainstream Score
+const avgPopularity = Math.round(tracks.reduce((sum, t) => sum + t.popularity, 0) / tracks.length);
+const { label, color } = getMainstreamLabel(avgPopularity);
+document.getElementById('mainstreamScore').textContent = `${avgPopularity}/100`;
+document.getElementById('mainstreamLabel').textContent = label;
+setTimeout(() => {
+document.getElementById('mainstreamBar').style.width = `${avgPopularity}%`;
+document.getElementById('mainstreamBar').className = `bg-gradient-to-r ${color} h-2 rounded-full transition-all duration-1000`;
+}, 100);
+
+// Music Personality
+const personality = getMusicPersonality(tracks);
+document.getElementById('personalityEmoji').textContent = personality.emoji;
+document.getElementById('personalityTitle').textContent = personality.title;
+document.getElementById('personalityDesc').textContent = personality.desc;
+
+// Decade Breakdown
+const decades = getDecadeBreakdown(tracks);
+const decadeContainer = document.getElementById('decadeBreakdown');
+decadeContainer.innerHTML = decades.map(({ decade, percentage }) => `
+<div>
+<div class="flex justify-between text-sm mb-1">
+<span class="text-white font-semibold">${decade}</span>
+<span class="text-purple-300">${percentage}%</span>
+</div>
+<div class="bg-white/10 rounded-full h-1.5">
+<div class="bg-gradient-to-r from-green-400 to-blue-400 h-1.5 rounded-full" style="width: ${percentage}%"></div>
+</div>
+</div>
+`).join('');
+
+document.getElementById('statsContainer').classList.remove('hidden');
+}
+
+async function loadTracks(timeRange) {
+const topTracks = await fetchWebApi(`v1/me/top/tracks?limit=50&time_range=${timeRange}`, 'GET');
+const tracksList = document.getElementById("topTracksList");
+tracksList.innerHTML = '';
+
+updateStats(topTracks.items);
+
+topTracks.items.forEach((track, index) => {
+const trackItem = document.createElement("li");
+trackItem.classList.add("track-item");
+trackItem.style.animationDelay = `${index * 0.05}s`;
+
+trackItem.innerHTML = `
+<a href="${track.external_urls.spotify}" target="_blank"
+class="flex items-center gap-4 bg-white/5 hover:bg-white/15 backdrop-blur-sm rounded-2xl p-4 transition-all hover:scale-[1.02] hover:shadow-xl group">
+<span class="text-purple-300 font-bold text-lg w-8 text-center shrink-0">${index + 1}</span>
+<img src="${track.album.images[0].url}" alt="Album Art" class="w-14 h-14 rounded-xl shadow-lg shrink-0">
+<div class="flex-1 min-w-0">
+<div class="font-semibold text-white truncate group-hover:text-green-400 transition-colors">${track.name}</div>
+<div class="text-purple-300 text-sm truncate">${track.artists.map(a => a.name).join(', ')}</div>
+</div>
+<div class="text-purple-400 text-sm shrink-0 hidden md:block">${new Date(track.album.release_date).getFullYear()}</div>
+<div class="text-purple-400 text-sm shrink-0 hidden md:block">${Math.floor(track.duration_ms / 60000)}:${String(Math.floor((track.duration_ms % 60000) / 1000)).padStart(2, '0')}</div>
+<svg class="w-5 h-5 text-green-400 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" fill="currentColor" viewBox="0 0 24 24">
+<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+</svg>
+</a>
+`;
+tracksList.appendChild(trackItem);
+});
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+loadTracks('short_term');
+});
+</script>
 </body>
 </html>
