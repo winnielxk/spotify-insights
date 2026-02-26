@@ -3,12 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Winnie's Spotify App</title>
+<title>Aurals - Your Music Analytics Dashboard</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="/config.js"></script>
 <script src="/app.js" defer></script>
 <style>
-/* Minimal custom styles for animations */
 @keyframes fadeIn {
 from { opacity: 0; transform: translateY(20px); }
 to { opacity: 1; transform: translateY(0); }
@@ -16,12 +15,54 @@ to { opacity: 1; transform: translateY(0); }
 .fade-in {
 animation: fadeIn 0.6s ease-out;
 }
+@keyframes float {
+0%, 100% { transform: translateY(0); }
+50% { transform: translateY(-10px); }
+}
+.floating {
+animation: float 4s ease-in-out infinite;
+}
 </style>
 </head>
 <body class="bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 min-h-screen text-white font-sans">
 <!-- Header -->
-<header class="py-6 px-8 flex items-center justify-between">
-<img src="/img/logo.png" class="h-12 cursor-pointer hover:scale-105 transition-transform" id="logo" onclick="redirectToHomePage()">
+<header class="py-6 px-8">
+<div class="max-w-4xl mx-auto flex flex-col items-center gap-6">
+<!-- Fractured Reality Logo -->
+<div class="cursor-pointer hover:scale-105 transition-transform floating" onclick="redirectToHomePage()">
+<svg width="280" height="100" viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+<g opacity="0.9">
+<!-- Fragment 1 - A -->
+<polygon points="100,120 120,90 140,140 120,160" fill="#10b981" opacity="0.7" transform="rotate(25 120 125)"/>
+<text x="110" y="145" font-family="Arial Black" font-size="36" font-weight="900" fill="white">A</text>
+<!-- Fragment 2 - U -->
+<polygon points="120,90 140,70 160,130 140,140" fill="#22d3ee" opacity="0.8" transform="rotate(-20 140 110)"/>
+<text x="130" y="125" font-family="Arial Black" font-size="38" font-weight="900" fill="white">U</text>
+<!-- Fragment 3 - R -->
+<polygon points="140,70 160,80 180,120 160,130" fill="#fbbf24" opacity="0.7" transform="rotate(15 160 100)"/>
+<text x="155" y="110" font-family="Arial Black" font-size="35" font-weight="900" fill="white">R</text>
+<!-- Fragment 4 - A -->
+<polygon points="160,80 200,60 220,100 180,120" fill="#ef4444" opacity="0.8"/>
+<text x="190" y="100" font-family="Arial Black" font-size="40" font-weight="900" fill="white">A</text>
+<!-- Fragment 5 - L -->
+<polygon points="180,150 200,130 220,170 200,180" fill="#8b5cf6" opacity="0.7" transform="rotate(10 200 155)"/>
+<text x="195" y="175" font-family="Arial Black" font-size="35" font-weight="900" fill="white">L</text>
+<!-- Fragment 6 - S -->
+<polygon points="200,130 220,100 240,150 220,170" fill="#ec4899" opacity="0.8" transform="rotate(-15 220 135)"/>
+<text x="215" y="155" font-family="Arial Black" font-size="37" font-weight="900" fill="white">S</text>
+</g>
+</svg>
+</div>
+    
+<!-- User Profile (shown when logged in) -->
+<div id="userProfile" class="hidden items-center gap-4 absolute top-6 right-8">
+<div class="text-right">
+<div id="userName" class="font-semibold text-white"></div>
+<button onclick="logout()" class="text-sm text-purple-300 hover:text-white transition-colors">Sign out</button>
+</div>
+<img id="userAvatar" src="" alt="User" class="w-12 h-12 rounded-full border-2 border-green-400 object-cover shadow-lg">
+</div>
+</div>
 </header>
 
 <!-- Navigation (hidden until logged in) -->
@@ -49,78 +90,57 @@ Recently Played
 <!-- Main Title -->
 <div class="text-center mb-16">
 <h1 class="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
-Welcome to Winnie's Spotify App!
+Welcome to Aurals
 </h1>
 <p class="text-xl md:text-2xl text-purple-200 mb-4 leading-relaxed">
-Discover new music with personalized playlists, and view your top tracks, songs, genres and listening history.
+Visualize your listening habits and discover insights about your favorite music
 </p>
 <p id="loginp" class="text-lg text-purple-300 mb-8">
-Log in with your Spotify account to get started:
+Connect your Spotify account to get started:
 </p>
 <button id="loginButton" 
 onclick="requestAuthorization()"
 class="inline-flex items-center gap-3 bg-green-500 hover:bg-green-600 text-white font-bold text-lg px-8 py-4 rounded-full shadow-2xl hover:shadow-green-500/50 transition-all hover:scale-105 active:scale-95">
-<img src="/img/icon.svg" alt="spotify icon" class="w-8 h-8">
-Log in to Spotify
-</button>
-</div>
-
-<!-- User Profile Dropdown (shown when logged in, centered above cards) -->
-<div id="userProfileSection" class="hidden mb-8">
-<div class="flex justify-center">
-<div class="relative">
-<button id="profileButton" class="flex items-center gap-3 bg-white/10 backdrop-blur-sm hover:bg-white/15 rounded-full px-5 py-3 transition-all">
-<img id="userAvatar" src="" alt="User" class="w-10 h-10 rounded-full border-2 border-green-400 object-cover">
-<span id="userGreeting" class="font-semibold"></span>
-<svg class="w-4 h-4 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+<svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+<path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
 </svg>
+Connect with Spotify
 </button>
-<div id="dropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white/10 backdrop-blur-lg rounded-xl shadow-xl border border-white/20 overflow-hidden">
-<button onclick="logout()" class="w-full text-left px-4 py-3 hover:bg-white/10 transition-colors text-white">
-Sign out
-</button>
-</div>
-</div>
-</div>
 </div>
 
 <!-- Feature Cards (shown when logged in) -->
 <div id="featureCards" class="hidden grid md:grid-cols-3 gap-6">
 <!-- Top Tracks Card -->
-<a href="/pages/tracks/shorttracks.html" class="group bg-gradient-to-br from-purple-600 to-purple-800 rounded-2xl p-8 hover:scale-105 transition-all hover:shadow-2xl">
+<a href="/pages/tracks/shorttracks.html" class="group bg-gradient-to-br from-green-600 to-teal-700 rounded-2xl p-8 hover:scale-105 transition-all hover:shadow-2xl">
 <div class="text-5xl mb-4">🎵</div>
 <h3 class="text-2xl font-bold mb-3">Top Tracks</h3>
-<p class="text-purple-200 leading-relaxed">View your most-played songs over different time periods</p>
-<div class="mt-4 text-green-400 font-semibold group-hover:translate-x-2 transition-transform inline-block">
+<p class="text-green-100 leading-relaxed">View your most-played songs over different time periods</p>
+<div class="mt-4 text-white font-semibold group-hover:translate-x-2 transition-transform inline-block">
 Explore →
 </div>
 </a>
 
 <!-- Top Artists Card -->
-<a href="/pages/artists/shortartists.html" class="group bg-gradient-to-br from-pink-600 to-purple-800 rounded-2xl p-8 hover:scale-105 transition-all hover:shadow-2xl">
+<a href="/pages/artists/shortartists.html" class="group bg-gradient-to-br from-pink-600 to-red-600 rounded-2xl p-8 hover:scale-105 transition-all hover:shadow-2xl">
 <div class="text-5xl mb-4">🎤</div>
 <h3 class="text-2xl font-bold mb-3">Top Artists</h3>
-<p class="text-purple-200 leading-relaxed">See your favorite artists ranked by listening time</p>
-<div class="mt-4 text-green-400 font-semibold group-hover:translate-x-2 transition-transform inline-block">
+<p class="text-pink-100 leading-relaxed">See your favorite artists ranked by listening time</p>
+<div class="mt-4 text-white font-semibold group-hover:translate-x-2 transition-transform inline-block">
 Explore →
 </div>
 </a>
 
 <!-- Recently Played Card -->
-<a href="/pages/recent.html" class="group bg-gradient-to-br from-blue-600 to-purple-800 rounded-2xl p-8 hover:scale-105 transition-all hover:shadow-2xl">
+<a href="/pages/recent.html" class="group bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-8 hover:scale-105 transition-all hover:shadow-2xl">
 <div class="text-5xl mb-4">⏱️</div>
 <h3 class="text-2xl font-bold mb-3">Recently Played</h3>
-<p class="text-purple-200 leading-relaxed">Check out your listening history and recent tracks</p>
-<div class="mt-4 text-green-400 font-semibold group-hover:translate-x-2 transition-transform inline-block">
+<p class="text-blue-100 leading-relaxed">Check out your listening history and recent tracks</p>
+<div class="mt-4 text-white font-semibold group-hover:translate-x-2 transition-transform inline-block">
 Explore →
 </div>
 </a>
 </div>
 </div>
-
-<!-- Playlist Container -->
-<div id="playlistContainer" class="max-w-6xl mx-auto px-6 pb-16"></div>
 
 <script>
 function logout() {
@@ -128,21 +148,10 @@ localStorage.clear();
 window.location.href = '/';
 }
 
-// Toggle dropdown
-document.addEventListener('click', function(e) {
-const profileButton = document.getElementById('profileButton');
-const dropdownMenu = document.getElementById('dropdownMenu');
-if (profileButton && profileButton.contains(e.target)) {
-dropdownMenu.classList.toggle('hidden');
-} else if (dropdownMenu && !dropdownMenu.contains(e.target)) {
-dropdownMenu.classList.add('hidden');
-}
-});
-
 document.addEventListener("DOMContentLoaded", async function () {
 let accessToken = localStorage.getItem("access_token");
 let header = document.getElementById("header");
-let userProfileSection = document.getElementById("userProfileSection");
+let userProfile = document.getElementById("userProfile");
 let loginButton = document.getElementById("loginButton");
 let loginp = document.getElementById("loginp");
 let landingContent = document.getElementById("landing-page-content");
@@ -157,7 +166,7 @@ header.classList.remove("hidden");
 if (loginButton) loginButton.style.display = "none";
 if (loginp) loginp.style.display = "none";
         
-// Show feature cards and profile
+// Show feature cards
 if (featureCards) {
 featureCards.classList.remove("hidden");
 featureCards.classList.add("grid");
@@ -173,10 +182,10 @@ if (descText) descText.textContent = "Explore your listening habits and discover
 try {
 const userInfo = await fetchWebApi('v1/me', 'GET');
 if (userInfo) {
-const firstName = userInfo.display_name.split(' ')[0];
-document.getElementById("userGreeting").textContent = `Hi, ${firstName}`;
+document.getElementById("userName").textContent = userInfo.display_name;
 document.getElementById("userAvatar").src = userInfo.images?.[0]?.url || "/img/icon.svg";
-userProfileSection.classList.remove("hidden");
+userProfile.classList.remove("hidden");
+userProfile.classList.add("flex");
 }
 } catch (error) {
 console.error("Error fetching user profile:", error);
