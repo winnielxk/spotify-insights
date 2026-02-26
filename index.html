@@ -1,56 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Winnie's Spotify App</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/musicbar.css">
-    <script src="/app.js" defer></script>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Winnie's Spotify App</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="/config.js"></script>
+<script src="/app.js" defer></script>
+<style>
+/* Minimal custom styles for animations */
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(20px); }
+to { opacity: 1; transform: translateY(0); }
+}
+.fade-in {
+animation: fadeIn 0.6s ease-out;
+}
+</style>
 </head>
+<body class="bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 min-h-screen text-white font-sans">
+<!-- Header -->
+<header class="py-6 px-8 flex items-center justify-between">
+<img src="/img/logo.png" class="h-12 cursor-pointer hover:scale-105 transition-transform" id="logo" onclick="redirectToHomePage()">
+    
+<!-- User Profile (shown when logged in) -->
+<div id="userProfile" class="hidden items-center gap-3 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2">
+<img id="userAvatar" src="" alt="User" class="w-10 h-10 rounded-full border-2 border-green-400">
+<span id="userName" class="font-semibold"></span>
+</div>
+</header>
 
-<body onload="onPageLoad()">
-    <header>
-        <img src="/img/logo.png" class="logo" id="logo" onclick="redirectToHomePage()">
-    </header>
+<!-- Navigation (hidden until logged in) -->
+<nav id="header" class="hidden">
+<div class="max-w-4xl mx-auto px-4 py-4">
+<div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+<a href="/pages/tracks/shorttracks.html" 
+class="bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-xl p-4 text-center font-semibold transition-all hover:scale-105 hover:shadow-lg">
+Top Tracks
+</a>
+<a href="/pages/artists/shortartists.html" 
+class="bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-xl p-4 text-center font-semibold transition-all hover:scale-105 hover:shadow-lg">
+Top Artists
+</a>
+<a href="/pages/recent.html" 
+class="bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-xl p-4 text-center font-semibold transition-all hover:scale-105 hover:shadow-lg">
+Recently Played
+</a>
+</div>
+</div>
+</nav>
 
-    <div class="header" id="header">
-        <div class="rowA">
-            <a href="/pages/tracks/shorttracks.html">Top Tracks</a>
-            <a href="/pages/artists/shortartists.html">Top Artists</a>
-        </div>
+<!-- Landing Page Content -->
+<div id="landing-page-content" class="max-w-6xl mx-auto px-6 py-16 fade-in">
+<!-- Main Title -->
+<div class="text-center mb-16">
+<h1 class="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+Welcome to Winnie's Spotify App!
+</h1>
+<p class="text-xl md:text-2xl text-purple-200 mb-4 leading-relaxed">
+Discover new music with personalized playlists, and view your top tracks, songs, genres and listening history.
+</p>
+<p id="loginp" class="text-lg text-purple-300 mb-8">
+Log in with your Spotify account to get started:
+</p>
+<button id="loginButton" 
+onclick="requestAuthorization()"
+class="inline-flex items-center gap-3 bg-green-500 hover:bg-green-600 text-white font-bold text-lg px-8 py-4 rounded-full shadow-2xl hover:shadow-green-500/50 transition-all hover:scale-105 active:scale-95">
+<img src="/img/icon.svg" alt="spotify icon" class="w-8 h-8">
+Log in to Spotify
+</button>
+</div>
 
-        <div class="rowB">
-            <a href="/pages/recent.html" id="c">Recently Played</a>
-            <a href="/pages/playlist.html" id="d">Playlist Generator</a>
-        </div>
-    </div>
+<!-- Feature Cards (shown when logged in) -->
+<div id="featureCards" class="hidden grid md:grid-cols-3 gap-6">
+<!-- Top Tracks Card -->
+<a href="/pages/tracks/shorttracks.html" class="group bg-gradient-to-br from-purple-600 to-purple-800 rounded-2xl p-8 hover:scale-105 transition-all hover:shadow-2xl">
+<div class="text-5xl mb-4">🎵</div>
+<h3 class="text-2xl font-bold mb-3">Top Tracks</h3>
+<p class="text-purple-200 leading-relaxed">View your most-played songs over different time periods</p>
+<div class="mt-4 text-green-400 font-semibold group-hover:translate-x-2 transition-transform inline-block">
+Explore →
+</div>
+</a>
 
-    <div id="landing-page-content">
-        <h1>Welcome to Winnie's Spotify App!</h1>
-        <p>Discover new music with personalized playlists, and view your top tracks songs, genres and listening history.
-        </p>
-        <p id="loginp">Log in with your Spotify account to get started:</p>
+<!-- Top Artists Card -->
+<a href="/pages/artists/shortartists.html" class="group bg-gradient-to-br from-pink-600 to-purple-800 rounded-2xl p-8 hover:scale-105 transition-all hover:shadow-2xl">
+<div class="text-5xl mb-4">🎤</div>
+<h3 class="text-2xl font-bold mb-3">Top Artists</h3>
+<p class="text-purple-200 leading-relaxed">See your favorite artists ranked by listening time</p>
+<div class="mt-4 text-green-400 font-semibold group-hover:translate-x-2 transition-transform inline-block">
+Explore →
+</div>
+</a>
 
-        <button id="loginButton" onclick="requestAuthorization()">
-            <img src="/img/icon.svg" alt="spotify icon" class="spotifyIcon"> Log in to Spotify
-        </button>
-    </div>
+<!-- Recently Played Card -->
+<a href="/pages/recent.html" class="group bg-gradient-to-br from-blue-600 to-purple-800 rounded-2xl p-8 hover:scale-105 transition-all hover:shadow-2xl">
+<div class="text-5xl mb-4">⏱️</div>
+<h3 class="text-2xl font-bold mb-3">Recently Played</h3>
+<p class="text-purple-200 leading-relaxed">Check out your listening history and recent tracks</p>
+<div class="mt-4 text-green-400 font-semibold group-hover:translate-x-2 transition-transform inline-block">
+Explore →
+</div>
+</a>
+</div>
+</div>
 
-    <div id="playlistContainer"></div>
+<!-- Playlist Container -->
+<div id="playlistContainer" class="max-w-6xl mx-auto px-6 pb-16"></div>
 
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            let accessToken = localStorage.getItem("access_token");
-            let header = document.getElementById("header");
-            if (!accessToken) {
-                header.style.display = "none";
-            }
-        });
-    </script>
+<script>
+document.addEventListener("DOMContentLoaded", async function () {
+let accessToken = localStorage.getItem("access_token");
+let header = document.getElementById("header");
+let userProfile = document.getElementById("userProfile");
+let loginButton = document.getElementById("loginButton");
+let loginp = document.getElementById("loginp");
+let landingContent = document.getElementById("landing-page-content");
+let featureCards = document.getElementById("featureCards");
+    
+if (!accessToken) {
+header.style.display = "none";
+} else {
+header.classList.remove("hidden");
+        
+// Hide login elements
+if (loginButton) loginButton.style.display = "none";
+if (loginp) loginp.style.display = "none";
+        
+// Show feature cards
+if (featureCards) {
+featureCards.classList.remove("hidden");
+featureCards.classList.add("grid");
+}
+        
+// Update landing text for logged-in users
+const welcomeText = landingContent.querySelector("h1");
+const descText = landingContent.querySelector("p");
+if (welcomeText) welcomeText.textContent = "Your Music Dashboard";
+if (descText) descText.textContent = "Explore your listening habits and discover insights about your favorite music.";
+        
+// Fetch user profile
+try {
+const userInfo = await fetchWebApi('v1/me', 'GET');
+if (userInfo) {
+document.getElementById("userName").textContent = userInfo.display_name;
+document.getElementById("userAvatar").src = userInfo.images?.[0]?.url || "/img/icon.svg";
+userProfile.classList.remove("hidden");
+userProfile.classList.add("flex");
+}
+} catch (error) {
+console.error("Error fetching user profile:", error);
+}
+}
+});
+</script>
 </body>
-
 </html>
