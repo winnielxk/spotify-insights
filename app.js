@@ -1,4 +1,4 @@
-var redirect_uri = "http://localhost:5501/";
+var redirect_uri = "http://127.0.0.1:5502/";
 var client_id = '3629edd575284d0aa6671c69ae8fb3d3';
 var client_secret = 'c086865ccb2b49718e078e6dab0c6a0b';
 var access_token = null;
@@ -11,6 +11,41 @@ const progress = document.getElementById("progress");
 const loginButton = document.getElementById("loginButton");
 const artistsContainer = document.getElementById("artistsContainer");
 const showArtistsContainer = document.getElementById("showArtistsContainer");
+
+// Handle OAuth callback
+const urlParams = new URLSearchParams(window.location.search);
+const code = urlParams.get('code');
+
+if (code && !localStorage.getItem('access_token')) {
+    console.log('Found authorization code, exchanging for token...');
+    
+    fetch('https://accounts.spotify.com/api/token', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            grant_type: 'authorization_code',
+            code: code,
+            redirect_uri: redirect_uri,
+            client_id: client_id,
+            client_secret: client_secret,
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Token exchange successful!', data);
+        localStorage.setItem('access_token', data.access_token);
+        localStorage.setItem('refresh_token', data.refresh_token);
+        localStorage.setItem('token_expires_at', Date.now() + (data.expires_in * 1000));
+        
+        // Redirect to clean URL
+        window.location.href = redirect_uri;
+    })
+    .catch(error => {
+        console.error('Token exchange failed:', error);
+    });
+}
 
 async function fetchWebApi(endpoint, method, body) {
     let accessToken = localStorage.getItem("access_token");
