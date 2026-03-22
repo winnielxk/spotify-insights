@@ -1,6 +1,7 @@
-var redirect_uri = "http://127.0.0.1:5502/";
-var client_id = '3629edd575284d0aa6671c69ae8fb3d3';
-var client_secret = 'c086865ccb2b49718e078e6dab0c6a0b';
+// Use the config object from config.js, or fallback to local defaults if config isn't loaded
+const redirect_uri = typeof config !== 'undefined' ? config.redirect_uri : "http://127.0.0.1:5502/index.html";
+const client_id = typeof config !== 'undefined' ? config.client_id : '3629edd575284d0aa6671c69ae8fb3d3';
+const client_secret = typeof config !== 'undefined' ? config.client_secret : 'c086865ccb2b49718e078e6dab0c6a0b';
 var access_token = null;
 var refresh_token = null;
 
