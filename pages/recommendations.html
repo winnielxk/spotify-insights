@@ -41,8 +41,36 @@
 </head>
 <body class="bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 min-h-screen text-white font-sans">
 
-<header class="py-6 px-8">
-  <img src="/img/logo.png" class="h-12 cursor-pointer hover:scale-105 transition-transform" onclick="redirectToHomePage()">
+<header class="py-6 px-8 flex justify-center">
+  <div class="cursor-pointer hover:scale-105 transition-transform" onclick="redirectToHomePage()">
+    <svg width="500" height="80" viewBox="0 0 410 120" xmlns="http://www.w3.org/2000/svg">
+    <g opacity="0.9" transform="translate(0, 20)">
+      <polygon points="20,70 50,20 80,70 75,75 60,75 60,40 40,40 40,75 25,75" fill="#10b981" opacity="0.8" transform="rotate(8 50 47)"/>
+      <text x="50" y="65" font-family="Arial Black" font-size="48" font-weight="900" fill="white" text-anchor="middle">A</text>
+      <line x1="25" y1="40" x2="75" y2="75" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+      <polygon points="90,30 130,30 130,70 120,80 100,80 90,70" fill="#22d3ee" opacity="0.85" transform="rotate(-5 110 50)"/>
+      <text x="110" y="68" font-family="Arial Black" font-size="48" font-weight="900" fill="white" text-anchor="middle">U</text>
+      <line x1="95" y1="30" x2="125" y2="80" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+      <polygon points="150,30 195,30 195,75 180,80 150,80 150,50" fill="#fbbf24" opacity="0.87" transform="rotate(6 172 50)"/>
+      <text x="172" y="68" font-family="Arial Black" font-size="48" font-weight="900" fill="white" text-anchor="middle">R</text>
+      <line x1="155" y1="30" x2="190" y2="80" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+      <polygon points="210,70 240,20 270,70 265,75 250,75 250,40 230,40 230,75 215,75" fill="#ef4444" opacity="0.86" transform="rotate(-7 240 47)"/>
+      <text x="240" y="65" font-family="Arial Black" font-size="48" font-weight="900" fill="white" text-anchor="middle">A</text>
+      <line x1="215" y1="40" x2="265" y2="75" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+      <polygon points="285,30 330,30 330,70 330,80 285,80" fill="#8b5cf6" opacity="0.88" transform="rotate(5 307 50)"/>
+      <text x="307" y="68" font-family="Arial Black" font-size="48" font-weight="900" fill="white" text-anchor="middle">L</text>
+      <line x1="290" y1="30" x2="325" y2="80" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+      <polygon points="345,30 390,30 390,70 380,80 345,75" fill="#ec4899" opacity="0.85" transform="rotate(-6 367 50)"/>
+      <text x="367" y="68" font-family="Arial Black" font-size="48" font-weight="900" fill="white" text-anchor="middle">S</text>
+      <line x1="350" y1="30" x2="385" y2="80" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+      <line x1="80" y1="50" x2="90" y2="50" stroke="white" stroke-width="1.5" opacity="0.3"/>
+      <line x1="130" y1="55" x2="150" y2="55" stroke="white" stroke-width="1.5" opacity="0.3"/>
+      <line x1="195" y1="50" x2="210" y2="50" stroke="white" stroke-width="1.5" opacity="0.3"/>
+      <line x1="270" y1="55" x2="285" y2="55" stroke="white" stroke-width="1.5" opacity="0.3"/>
+      <line x1="330" y1="50" x2="345" y2="50" stroke="white" stroke-width="1.5" opacity="0.3"/>
+    </g>
+    </svg>
+  </div>
 </header>
 
 <nav class="max-w-4xl mx-auto px-4 py-4">
@@ -163,7 +191,7 @@ function addSeed(artist) {
 document.getElementById('artistSearch').addEventListener('input', e => {
   clearTimeout(searchTimeout);
   const q = e.target.value.trim();
-  if (q.length < 2) { document.getElementById('searchResults').classList.add('hidden'); return; }
+  if (q.length < 1) { document.getElementById('searchResults').classList.add('hidden'); return; }
   searchTimeout = setTimeout(() => doArtistSearch(q), 300);
 });
 
@@ -213,18 +241,20 @@ async function lfmSimilar(name) {
   return (d?.similarartists?.artist || []).map(a => ({ name: a.name, match: Math.round(parseFloat(a.match) * 100) }));
 }
 
-async function lfmTags(name) {
-  const r = await fetch(`https://ws.audioscrobbler.com/2.0/?method=artist.getTopTags&artist=${encodeURIComponent(name)}&api_key=${LASTFM_KEY}&format=json&limit=3`);
-  const d = await r.json();
-  return (d?.toptags?.tag || []).slice(0, 3).map(t => t.name);
-}
-
 const TAG_REMAP = {
-  'indie rock':'Indie Rock','indie pop':'Indie Pop','alternative':'Alternative','alt-rock':'Alternative',
-  'pop':'Pop','rock':'Rock','electronic':'Electronic','dance':'Electronic','hip-hop':'Hip-Hop',
-  'hip hop':'Hip-Hop','r&b':'R&B','soul':'Soul / R&B','folk':'Folk','acoustic':'Folk',
-  'punk':'Punk','metal':'Metal','jazz':'Jazz','country':'Country','emo':'Emo',
-  'shoegaze':'Shoegaze','dream pop':'Dream Pop','post-punk':'Post-Punk',
+  'indie rock': 'Indie Rock', 'indie pop': 'Indie Pop', 'alternative rock': 'Alternative',
+  'alternative': 'Alternative', 'alt-rock': 'Alternative', 'pop': 'Pop', 'dance pop': 'Pop',
+  'electropop': 'Pop', 'synth-pop': 'Pop', 'pop rock': 'Pop', 'art pop': 'Pop',
+  'rock': 'Rock', 'electronic': 'Electronic', 'dance': 'Electronic', 'edm': 'Electronic',
+  'hip-hop': 'Hip-Hop', 'hip hop': 'Hip-Hop', 'rap': 'Hip-Hop', 'trap': 'Hip-Hop',
+  'conscious hip hop': 'Hip-Hop', 'melodic rap': 'Hip-Hop', 'southern hip hop': 'Hip-Hop',
+  'east coast hip hop': 'Hip-Hop', 'gangster rap': 'Hip-Hop',
+  'r&b': 'R&B', 'soul': 'R&B', 'neo soul': 'R&B', 'pop soul': 'R&B', 'contemporary r&b': 'R&B',
+  'folk': 'Folk', 'acoustic': 'Folk', 'singer-songwriter': 'Folk', 'folk pop': 'Folk',
+  'punk': 'Punk', 'metal': 'Metal', 'jazz': 'Jazz', 'country': 'Country', 'emo': 'Emo',
+  'shoegaze': 'Shoegaze', 'dream pop': 'Dream Pop', 'post-punk': 'Post-Punk',
+  'uk indie': 'Indie Rock', 'permanent wave': 'Alternative', 'new wave': 'New Wave',
+  'mellow gold': 'Alternative', 'soft rock': 'Rock', 'classic rock': 'Rock',
 };
 
 document.getElementById('savePlaylistBtn').addEventListener('click', async () => {
@@ -252,12 +282,12 @@ document.getElementById('generateBtn').addEventListener('click', generate);
 async function generate() {
   if (!seedArtists.length) { showToast('Add at least one seed artist', true); return; }
 
-  const loadingState = document.getElementById('loadingState');
-  const errorState   = document.getElementById('errorState');
+  const loadingState   = document.getElementById('loadingState');
+  const errorState     = document.getElementById('errorState');
   const resultsSection = document.getElementById('resultsSection');
-  const recGroups    = document.getElementById('recGroups');
-  const loadingMsg   = document.getElementById('loadingMsg');
-  const saveBtn      = document.getElementById('savePlaylistBtn');
+  const recGroups      = document.getElementById('recGroups');
+  const loadingMsg     = document.getElementById('loadingMsg');
+  const saveBtn        = document.getElementById('savePlaylistBtn');
 
   loadingState.classList.remove('hidden');
   errorState.classList.add('hidden');
@@ -286,10 +316,11 @@ async function generate() {
 
     loadingMsg.textContent = 'Matching on Spotify + fetching genre tags...';
     const enriched = await Promise.all(sorted.map(async s => {
-      const [spotifyArtist, tags] = await Promise.all([
-        fetchWebApi(`v1/search?q=${encodeURIComponent(s.name)}&type=artist&limit=1`, 'GET').then(r => r?.artists?.items?.[0] || null),
-        lfmTags(s.name)
-      ]);
+      const spotifyArtist = await fetchWebApi(
+        `v1/search?q=${encodeURIComponent(s.name)}&type=artist&limit=1`, 'GET'
+      ).then(r => r?.artists?.items?.[0] || null);
+      // Use Spotify's own genre data — much more accurate than Last.fm tags
+      const tags = spotifyArtist?.genres || [];
       return { ...s, spotifyArtist, tags };
     }));
 
@@ -300,14 +331,17 @@ async function generate() {
     const seen = new Set();
     await Promise.all(valid.map(async entry => {
       const r = await fetchWebApi(`v1/artists/${entry.spotifyArtist.id}/top-tracks?market=US`, 'GET');
-      entry.tracks = (r?.tracks || []).slice(0, 2).filter(t => {
-        if (seen.has(t.id)) return false;
-        seen.add(t.id); return true;
-      });
+      // Deduplicate by both track ID and album ID so the same album never appears twice
+      entry.tracks = (r?.tracks || []).filter(t => {
+        if (seen.has(t.id) || seen.has(t.album.id)) return false;
+        seen.add(t.id);
+        seen.add(t.album.id);
+        return true;
+      }).slice(0, 2);
       allGeneratedTracks.push(...entry.tracks);
     }));
 
-    // Group by vibe
+    // Group by genre vibe using Spotify genres
     const groups = new Map();
     valid.forEach(entry => {
       if (!entry.tracks.length) return;
@@ -353,7 +387,6 @@ async function generate() {
                 <div class="text-purple-500 text-xs mt-0.5">Because you like <span class="text-purple-300">${entry.becauseOf}</span></div>
               </div>
               <div class="hidden md:flex flex-col items-end gap-1 shrink-0">
-                <span class="text-xs bg-white/10 rounded-full px-2 py-0.5 text-purple-300">${entry.match}% match</span>
                 <span class="text-purple-500 text-xs truncate max-w-[140px]">${track.album.name}</span>
               </div>
               <svg class="w-5 h-5 text-green-400 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" fill="currentColor" viewBox="0 0 24 24">

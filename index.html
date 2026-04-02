@@ -32,37 +32,24 @@ animation: float 4s ease-in-out infinite;
 <div class="cursor-pointer hover:scale-105 transition-transform floating" onclick="redirectToHomePage()">
 <svg width="500" height="80" viewBox="0 0 410 120" xmlns="http://www.w3.org/2000/svg">
 <g opacity="0.9" transform="translate(0, 20)">
-<!-- Fragment 1 - A -->
 <polygon points="20,70 50,20 80,70 75,75 60,75 60,40 40,40 40,75 25,75" fill="#10b981" opacity="0.8" transform="rotate(8 50 47)"/>
 <text x="50" y="65" font-family="Arial Black" font-size="48" font-weight="900" fill="white" text-anchor="middle">A</text>
 <line x1="25" y1="40" x2="75" y2="75" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-
-<!-- Fragment 2 - U -->
 <polygon points="90,30 130,30 130,70 120,80 100,80 90,70" fill="#22d3ee" opacity="0.85" transform="rotate(-5 110 50)"/>
 <text x="110" y="68" font-family="Arial Black" font-size="48" font-weight="900" fill="white" text-anchor="middle">U</text>
 <line x1="95" y1="30" x2="125" y2="80" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-
-<!-- Fragment 3 - R -->
 <polygon points="150,30 195,30 195,75 180,80 150,80 150,50" fill="#fbbf24" opacity="0.87" transform="rotate(6 172 50)"/>
 <text x="172" y="68" font-family="Arial Black" font-size="48" font-weight="900" fill="white" text-anchor="middle">R</text>
 <line x1="155" y1="30" x2="190" y2="80" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-
-<!-- Fragment 4 - A -->
 <polygon points="210,70 240,20 270,70 265,75 250,75 250,40 230,40 230,75 215,75" fill="#ef4444" opacity="0.86" transform="rotate(-7 240 47)"/>
 <text x="240" y="65" font-family="Arial Black" font-size="48" font-weight="900" fill="white" text-anchor="middle">A</text>
 <line x1="215" y1="40" x2="265" y2="75" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-
-<!-- Fragment 5 - L -->
 <polygon points="285,30 330,30 330,70 330,80 285,80" fill="#8b5cf6" opacity="0.88" transform="rotate(5 307 50)"/>
 <text x="307" y="68" font-family="Arial Black" font-size="48" font-weight="900" fill="white" text-anchor="middle">L</text>
 <line x1="290" y1="30" x2="325" y2="80" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-
-<!-- Fragment 6 - S -->
 <polygon points="345,30 390,30 390,70 380,80 345,75" fill="#ec4899" opacity="0.85" transform="rotate(-6 367 50)"/>
 <text x="367" y="68" font-family="Arial Black" font-size="48" font-weight="900" fill="white" text-anchor="middle">S</text>
 <line x1="350" y1="30" x2="385" y2="80" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-
-<!-- Connecting crack lines between letters -->
 <line x1="80" y1="50" x2="90" y2="50" stroke="white" stroke-width="1.5" opacity="0.3"/>
 <line x1="130" y1="55" x2="150" y2="55" stroke="white" stroke-width="1.5" opacity="0.3"/>
 <line x1="195" y1="50" x2="210" y2="50" stroke="white" stroke-width="1.5" opacity="0.3"/>
@@ -71,7 +58,7 @@ animation: float 4s ease-in-out infinite;
 </g>
 </svg>
 </div>
-    
+
 <!-- User Profile (shown when logged in) -->
 <div id="userProfile" class="hidden items-center gap-4 absolute top-6 right-8">
 <div class="text-right">
@@ -86,18 +73,22 @@ animation: float 4s ease-in-out infinite;
 <!-- Navigation (hidden until logged in) -->
 <nav id="header" class="hidden">
 <div class="max-w-4xl mx-auto px-4 py-4">
-<div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-<a href="/pages/tracks/shorttracks.html" 
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<a href="/pages/tracks/shorttracks.html"
 class="bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-xl p-4 text-center font-semibold transition-all hover:scale-105 hover:shadow-lg">
 Top Tracks
 </a>
-<a href="/pages/artists/shortartists.html" 
+<a href="/pages/artists/shortartists.html"
 class="bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-xl p-4 text-center font-semibold transition-all hover:scale-105 hover:shadow-lg">
 Top Artists
 </a>
-<a href="/pages/recent.html" 
+<a href="/pages/recent.html"
 class="bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-xl p-4 text-center font-semibold transition-all hover:scale-105 hover:shadow-lg">
 Recently Played
+</a>
+<a href="/pages/recommendations.html"
+class="bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-xl p-4 text-center font-semibold transition-all hover:scale-105 hover:shadow-lg">
+Recommendations
 </a>
 </div>
 </div>
@@ -116,7 +107,7 @@ Visualize your listening habits and discover insights about your favorite music
 <p id="loginp" class="text-lg text-purple-300 mb-8">
 Connect your Spotify account to get started:
 </p>
-<button id="loginButton" 
+<button id="loginButton"
 onclick="requestAuthorization()"
 class="inline-flex items-center gap-3 bg-green-500 hover:bg-green-600 text-white font-bold text-lg px-8 py-4 rounded-full shadow-2xl hover:shadow-green-500/50 transition-all hover:scale-105 active:scale-95">
 <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
@@ -127,7 +118,7 @@ Connect with Spotify
 </div>
 
 <!-- Feature Cards (shown when logged in) -->
-<div id="featureCards" class="hidden grid md:grid-cols-3 gap-6">
+<div id="featureCards" class="hidden grid md:grid-cols-4 gap-6">
 <!-- Top Tracks Card -->
 <a href="/pages/tracks/shorttracks.html" class="group bg-gradient-to-br from-green-600 to-teal-700 rounded-2xl p-8 hover:scale-105 transition-all hover:shadow-2xl">
 <div class="text-5xl mb-4">🎵</div>
@@ -157,6 +148,16 @@ Explore →
 Explore →
 </div>
 </a>
+
+<!-- Recommendations Card -->
+<a href="/pages/recommendations.html" class="group bg-gradient-to-br from-purple-600 to-violet-700 rounded-2xl p-8 hover:scale-105 transition-all hover:shadow-2xl">
+<div class="text-5xl mb-4">✨</div>
+<h3 class="text-2xl font-bold mb-3">Recommendations</h3>
+<p class="text-purple-100 leading-relaxed">Discover new music tailored to your taste</p>
+<div class="mt-4 text-white font-semibold group-hover:translate-x-2 transition-transform inline-block">
+Explore →
+</div>
+</a>
 </div>
 </div>
 
@@ -174,29 +175,25 @@ let loginButton = document.getElementById("loginButton");
 let loginp = document.getElementById("loginp");
 let landingContent = document.getElementById("landing-page-content");
 let featureCards = document.getElementById("featureCards");
-    
+
 if (!accessToken) {
 header.style.display = "none";
 } else {
 header.classList.remove("hidden");
-        
-// Hide login elements
+
 if (loginButton) loginButton.style.display = "none";
 if (loginp) loginp.style.display = "none";
-        
-// Show feature cards
+
 if (featureCards) {
 featureCards.classList.remove("hidden");
 featureCards.classList.add("grid");
 }
-        
-// Update landing text for logged-in users
+
 const welcomeText = landingContent.querySelector("h1");
 const descText = landingContent.querySelector("p");
 if (welcomeText) welcomeText.textContent = "Your Music Dashboard";
 if (descText) descText.textContent = "Explore your listening habits and discover insights about your favorite music.";
-        
-// Fetch user profile
+
 try {
 const userInfo = await fetchWebApi('v1/me', 'GET');
 if (userInfo) {

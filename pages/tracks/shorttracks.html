@@ -19,13 +19,41 @@ to { opacity: 1; transform: translateY(0); }
 <body class="bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 min-h-screen text-white font-sans">
 
 <!-- Header -->
-<header class="py-6 px-8 flex items-center justify-between">
-<img src="/img/logo.png" class="h-12 cursor-pointer hover:scale-105 transition-transform" id="logo" onclick="redirectToHomePage()">
+<header class="py-6 px-8 flex justify-center">
+  <div class="cursor-pointer hover:scale-105 transition-transform" onclick="redirectToHomePage()">
+    <svg width="500" height="80" viewBox="0 0 410 120" xmlns="http://www.w3.org/2000/svg">
+    <g opacity="0.9" transform="translate(0, 20)">
+      <polygon points="20,70 50,20 80,70 75,75 60,75 60,40 40,40 40,75 25,75" fill="#10b981" opacity="0.8" transform="rotate(8 50 47)"/>
+      <text x="50" y="65" font-family="Arial Black" font-size="48" font-weight="900" fill="white" text-anchor="middle">A</text>
+      <line x1="25" y1="40" x2="75" y2="75" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+      <polygon points="90,30 130,30 130,70 120,80 100,80 90,70" fill="#22d3ee" opacity="0.85" transform="rotate(-5 110 50)"/>
+      <text x="110" y="68" font-family="Arial Black" font-size="48" font-weight="900" fill="white" text-anchor="middle">U</text>
+      <line x1="95" y1="30" x2="125" y2="80" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+      <polygon points="150,30 195,30 195,75 180,80 150,80 150,50" fill="#fbbf24" opacity="0.87" transform="rotate(6 172 50)"/>
+      <text x="172" y="68" font-family="Arial Black" font-size="48" font-weight="900" fill="white" text-anchor="middle">R</text>
+      <line x1="155" y1="30" x2="190" y2="80" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+      <polygon points="210,70 240,20 270,70 265,75 250,75 250,40 230,40 230,75 215,75" fill="#ef4444" opacity="0.86" transform="rotate(-7 240 47)"/>
+      <text x="240" y="65" font-family="Arial Black" font-size="48" font-weight="900" fill="white" text-anchor="middle">A</text>
+      <line x1="215" y1="40" x2="265" y2="75" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+      <polygon points="285,30 330,30 330,70 330,80 285,80" fill="#8b5cf6" opacity="0.88" transform="rotate(5 307 50)"/>
+      <text x="307" y="68" font-family="Arial Black" font-size="48" font-weight="900" fill="white" text-anchor="middle">L</text>
+      <line x1="290" y1="30" x2="325" y2="80" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+      <polygon points="345,30 390,30 390,70 380,80 345,75" fill="#ec4899" opacity="0.85" transform="rotate(-6 367 50)"/>
+      <text x="367" y="68" font-family="Arial Black" font-size="48" font-weight="900" fill="white" text-anchor="middle">S</text>
+      <line x1="350" y1="30" x2="385" y2="80" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+      <line x1="80" y1="50" x2="90" y2="50" stroke="white" stroke-width="1.5" opacity="0.3"/>
+      <line x1="130" y1="55" x2="150" y2="55" stroke="white" stroke-width="1.5" opacity="0.3"/>
+      <line x1="195" y1="50" x2="210" y2="50" stroke="white" stroke-width="1.5" opacity="0.3"/>
+      <line x1="270" y1="55" x2="285" y2="55" stroke="white" stroke-width="1.5" opacity="0.3"/>
+      <line x1="330" y1="50" x2="345" y2="50" stroke="white" stroke-width="1.5" opacity="0.3"/>
+    </g>
+    </svg>
+  </div>
 </header>
 
 <!-- Navigation -->
 <nav class="max-w-4xl mx-auto px-4 py-4">
-<div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
 <a href="/pages/tracks/shorttracks.html"
 class="bg-white/20 backdrop-blur-sm rounded-xl p-4 text-center font-semibold transition-all hover:scale-105 hover:shadow-lg border border-white/30">
 Top Tracks
@@ -37,6 +65,10 @@ Top Artists
 <a href="/pages/recent.html"
 class="bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-xl p-4 text-center font-semibold transition-all hover:scale-105 hover:shadow-lg">
 Recently Played
+</a>
+<a href="/pages/recommendations.html"
+class="bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-xl p-4 text-center font-semibold transition-all hover:scale-105 hover:shadow-lg">
+Recommendations
 </a>
 </div>
 </nav>
